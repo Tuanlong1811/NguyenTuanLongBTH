@@ -17,9 +17,10 @@ namespace NguyenTuanLongBTH.Controllers
         {
             return View();
         }
-
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult Index(string FullName, string Email)
         {
+            ViewBag.name = "Hello" + FullName +"-" + Email;
             return View();
         }
 
