@@ -25,8 +25,7 @@ namespace Sinhvien.Controllers
             string message = std.StudentID + "-";
             message += std.StudentName + "-";
             message += std.Age;
-            ViewBag.TT = message;
-            return View();
+            ViewBag.TT = message;            return View();
         }
     }
 }
