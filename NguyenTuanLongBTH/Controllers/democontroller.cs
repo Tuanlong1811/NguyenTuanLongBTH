@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NguyenTuanLongBTH.Models.Process;
+using NguyenTuanLongBTH.Models;
 namespace NguyenTuanLongBTH.Controllers
 
 {
