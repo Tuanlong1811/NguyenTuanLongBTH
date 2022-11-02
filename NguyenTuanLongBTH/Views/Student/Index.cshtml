@@ -1,40 +1,41 @@
-﻿<h2>Thong tin : @ViewBag.mess </h2>
+﻿@model IEnumerable<NguyenTuanLongBTH_02.Models.Student>
 
-<form asp-action="Index">
-    <label>PersonID: </label>
-    <input type="number" name="StudentId" value="1">
-    <br>
-    <label>Ho va ten:</label>
-    <input type="text" name="StudentName" value="Nguyen Van A">
-    <br>
-    <label> Age </label>
-    <input type="text" name="Age" value="18">
-    <br>
-    <input type="submit" value="Send">
-</form>
-<h2>@ViewBag.TT</h2>
+@{
+    ViewData["Title"] = "Index";
+}
 
-<h2>Danh sach svien</h2>
-<hr>
-<table class="tableborder">
-    <tr>
-        <th>
-            <label>Ma Sinh Vien</label>
-        </th>
-        <th>
-            <label>Ten Sinh Vien</label>
-        </th>
-        <th>
-            <label>Tuoi</label>
-        </th>
-    </tr>
-    @foreach (var item in ViewData["Students"] as List<Sinhvien.Models.Student> )
-    {
-       <tr>
-           <td>@item.StudentID</td>
-           <td>@item.StudentName</td>
-           <td>@item.Age</td>
-       </tr>
-       
-   }
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StudentID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StudentName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.StudentID">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.StudentID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

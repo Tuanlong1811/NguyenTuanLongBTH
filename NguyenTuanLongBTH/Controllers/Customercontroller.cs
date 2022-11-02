@@ -2,22 +2,21 @@
 using NguyenTuanLongBTH_02.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Nguoi.Models;
 
 namespace NguyenTuanLongBTH_02.Controllers
 {
-    public class PersonController : Controller
+    public class CustomerController : Controller
     {
         //khai bao DBcontext de lam viec voi Database
         private readonly ApplicationDbContext _context;
-        public PersonController(ApplicationDbContext context)
+        public CustomerController(ApplicationDbContext context)
         {
             _context = context;
         }
         // Action tra ve View hien thi danh sach 
         public async Task<IActionResult> Index()
         {
-            var model = await _context.Persons.ToListAsync();
+            var model = await _context.Customers.ToListAsync();
             return View(model);
         }
         //Action tra ve View them moi danh sach 
@@ -27,7 +26,7 @@ namespace NguyenTuanLongBTH_02.Controllers
         }
         //Action xu ly du lieu gui len tu view va luu vao Database
         [HttpPost]
-        public async Task<IActionResult> Create(Person std)
+        public async Task<IActionResult> Create(Customer std)
         {
             if (ModelState.IsValid)
             {
@@ -38,26 +37,26 @@ namespace NguyenTuanLongBTH_02.Controllers
             }
             return View(std);
         }
-        //GET: Person/Edit/5
+        //GET: Customer/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
             {
                 return View("NotFound");
             }
-            var person = await _context.Persons.FindAsync(id);
-            if (person == null)
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null)
             {
                 return View("NotFound");
             }
-            return View(person);
+            return View(customer);
         }
-        //POST :Student/Edit/5
+        //POST :Customer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("PersonID,PersonName")] Person std)
+        public async Task<IActionResult> Edit(string id, [Bind("CustomerID,CustomerName")] Customer std)
         {
-            if (id != std.PersonID)
+            if (id != std.CustomerID)
             {
                 return View("NotFound");
             }
@@ -70,7 +69,7 @@ namespace NguyenTuanLongBTH_02.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PersonExists(std.PersonID))
+                    if (!CustomerExists(std.CustomerID))
                     {
                         return View("NotFound");
                     }
@@ -83,15 +82,15 @@ namespace NguyenTuanLongBTH_02.Controllers
             }
             return View(std);
         }
-        //GET: Person/Delete/5
+        //GET: Customer/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
             {
                 return View("NotFound");
             }
-            var std = await _context.Persons
-             .FirstOrDefaultAsync(m => m.PersonID == id);
+            var std = await _context.Customers
+             .FirstOrDefaultAsync(m => m.CustomerID == id);
             if (std == null)
             {
                 return View("NotFound");
@@ -103,14 +102,14 @@ namespace NguyenTuanLongBTH_02.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var std = await _context.Persons.FindAsync(id);
-            _context.Persons.Remove(std);
+            var std = await _context.Customers.FindAsync(id);
+            _context.Customers.Remove(std);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        private bool PersonExists(string id)
+        private bool CustomerExists(string id)
         {
-            return _context.Persons.Any(e => e.PersonID == id);
+            return _context.Customers.Any(e => e.CustomerID == id);
         }
     }
 }

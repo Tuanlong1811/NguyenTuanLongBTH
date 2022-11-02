@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+namespace NguyenTuanLongBTH_02.Models;
 
-namespace Congnhan.Models
+public class Employee
 {
-    public class Employee
-    {
-        public int EmployeeID { get; set; }
-        public string EmployeeName { get; set; }
-        public int Age { get; set; }
-    }
+    //Khai bao cac thuoc tinh 
+    [Key]
+    [Required(ErrorMessage = "Mã nhân viên không được để trống")]
+    public string EmployeeID { get; set; }
+    [Required(ErrorMessage = "Họ tên nhân viên không được để trống")]
+    [MinLength(3)]
+    public string EmployeeName { get; set; }
 }
-
-

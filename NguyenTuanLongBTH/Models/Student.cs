@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+namespace NguyenTuanLongBTH_02.Models;
 
-namespace Sinhvien.Models
+public class Student
 {
-    public class Student
-    {
-        public int StudentID { get; set; }
-        public string StudentName { get; set; }
-        public int Age { get; set; }
-    }
+    //Khai bao cac thuoc tinh 
+    [Key]
+    [Required(ErrorMessage = "Mã sinh viên không được để trống")]
+    public string StudentID { get; set; }
+    [Required(ErrorMessage = "Họ tên sinh viên không được để trống")]
+    [MinLength(3)]
+    public string StudentName { get; set; }
 }
- 

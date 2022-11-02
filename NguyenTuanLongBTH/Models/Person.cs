@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+namespace NguyenTuanLongBTH_02.Models;
 
-namespace Nguoi.Models
+public class Person
 {
-    public class Person
-    {
-        public int PersonId { get; set; }
-        public string PersonName { get; set; }
-        public int Age { get; set; }
-    }
+    //Khai bao cac thuoc tinh 
+    [Key]
+    [Required(ErrorMessage = "ID không được để trống")]
+    public string PersonID { get; set; }
+    [Required(ErrorMessage = "Họ tên không được để trống")]
+    [MinLength(3)]
+    public string PersonName { get; set; }
 }
-
-
