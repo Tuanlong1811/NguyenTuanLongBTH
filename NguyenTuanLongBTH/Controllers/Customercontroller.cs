@@ -1,30 +1,34 @@
 ﻿using NguyenTuanLongBTH_02.Data;
 using NguyenTuanLongBTH_02.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using NguyenTuanLongBTH_02.Models.Process;
 
-namespace NguyenTuanLongBTH_02.Controllers
+namespace NguyenTuanLong.Controllers
 {
+
     public class CustomerController : Controller
     {
-        //khai bao DBcontext de lam viec voi Database
+        //khai bao Dbcontext de lam viec voi database
         private readonly ApplicationDbContext _context;
         public CustomerController(ApplicationDbContext context)
         {
             _context = context;
         }
-        // Action tra ve View hien thi danh sach 
+
+        //Action tra ve view hien thi danh sach sinh vien
         public async Task<IActionResult> Index()
         {
             var model = await _context.Customers.ToListAsync();
             return View(model);
         }
-        //Action tra ve View them moi danh sach 
+
+        //Action trả về view thêm mới danh sách sinh viên
         public IActionResult Create()
         {
             return View();
         }
-        //Action xu ly du lieu gui len tu view va luu vao Database
+
+        //Action xử lý dữ liệu sinh viên gửi lên từ view và lưu vào database
         [HttpPost]
         public async Task<IActionResult> Create(Customer std)
         {
@@ -33,25 +37,35 @@ namespace NguyenTuanLongBTH_02.Controllers
                 _context.Add(std);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-
             }
-            return View(std);
+            return View();
         }
-        //GET: Customer/Edit/5
+
+        //kiem tra ma sinh vien co ton tai khong
+        private bool CustomerExists(string id)
+        {
+            return _context.Customers.Any(e => e.CustomerID == id);
+        }
+
+        //Tạo phương thức Edit kiểm tra xem “id” của sinh viên có tồn tại trong cơ sở dữ liệu không? Nếu có thì trả về view “Edit” cho phép người dùng chỉnh sửa thông tin của Sinh viên đó.​
+        // GET: Customer/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
             {
                 return View("NotFound");
             }
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer == null)
+
+            var Customer = await _context.Customers.FindAsync(id);
+            if (Customer == null)
             {
                 return View("NotFound");
             }
-            return View(customer);
+            return View(Customer);
         }
-        //POST :Customer/Edit/5
+
+        //Tạo phương thức Edit cập nhật thông tin của sinh viên theo mã sinh viên.
+        // POST: Customer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("CustomerID,CustomerName")] Customer std)
@@ -60,6 +74,7 @@ namespace NguyenTuanLongBTH_02.Controllers
             {
                 return View("NotFound");
             }
+
             if (ModelState.IsValid)
             {
                 try
@@ -82,21 +97,25 @@ namespace NguyenTuanLongBTH_02.Controllers
             }
             return View(std);
         }
-        //GET: Customer/Delete/5
+
+        //Tạo phương thức Delete kiểm tra xem “id” của sinh viên có tồn tại trong cơ sở dữ liệu không? Nếu có thì trả về view “Delete” cho phép người dùng xoá thông tin của Sinh viên đó.
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
             {
                 return View("NotFound");
             }
-            var std = await _context.Customers
-             .FirstOrDefaultAsync(m => m.CustomerID == id);
+
+            var std = await _context.Customers.FirstOrDefaultAsync(m => m.CustomerID == id);
             if (std == null)
             {
                 return View("NotFound");
             }
+
             return View(std);
         }
+
+        //Tạo phương thức Delete xoá thông tin của sinh viên theo mã sinh viên.
         //POST: Product/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -107,9 +126,48 @@ namespace NguyenTuanLongBTH_02.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        private bool CustomerExists(string id)
+
+        private ExcelProcess _excelProcess = new ExcelProcess();
+        public async Task<IActionResult> Upload(IFormFile file)
         {
-            return _context.Customers.Any(e => e.CustomerID == id);
+            if (file != null)
+            {
+                string fileExtension = Path.GetExtension(file.FileName);
+                if (fileExtension != ".xls" && fileExtension != ".xlsx")
+                {
+                    ModelState.AddModelError("", "Please choose excel file to upload!");
+                }
+                else
+                {
+                    //rename file when upload to sever
+                    var fileName = DateTime.Now.ToShortTimeString() + fileExtension;
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory() + "/Uploads/Excels", fileName);
+                    var fileLocation = new FileInfo(filePath).ToString();
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        //save file to server
+                        await file.CopyToAsync(stream);
+                        //read data from file and write to database
+                        var dt = _excelProcess.ExcelToDataTable(fileLocation);
+                        //using for loop to read data form dt
+                        for (int i = 0; i < dt.Rows.Count; i++)
+                        {
+                            //create a new Customer object
+                            var cus = new Customer();
+                            //set values for attribiutes
+                            cus.CustomerID = dt.Rows[i][0].ToString();
+                            cus.CustomerName = dt.Rows[i][1].ToString();
+                            cus.CustomerAddress = dt.Rows[i][2].ToString();
+                            //add oject to context
+                            _context.Customer.Add(cus);
+                        }
+                        //save to database
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+            return View();
         }
     }
 }
