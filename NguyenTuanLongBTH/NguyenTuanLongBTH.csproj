@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Upload\" />
+    <Folder Include="Upload\Excel\" />
     <Folder Include="Views\NewFolder\" />
   </ItemGroup>
 
